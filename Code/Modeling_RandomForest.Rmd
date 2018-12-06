@@ -39,7 +39,7 @@ library(randomForestExplainer)
 
 ### Import dataset and Preparation
 ```{r }
-kickstarter <- read.csv("C:/Users/Qilincaizi/Desktop/BU_MSSP/Fall_2018/MA678_Appl_Stat_Model/Midterm_Project/dataset/kickstarter.csv")
+kickstarter <- read.csv("C:/Users/Qilincaizi/Desktop/BU_MSSP/Fall_2018/MA678_Appl_Stat_Model/Midterm_Project/Kickstarter_project/dataset/kickstarter.csv")
 ks <- kickstarter
 # Reformat Deadline and Launched to Data
 ks$deadline <- as.Date(ks$deadline, "%m/%d/%Y")
@@ -57,11 +57,13 @@ ks <- ks %>% mutate(ratio=round(usd_pledged_real/usd_goal_real, digits = 4))
 ks$state[ks$ratio < 0.99999 & ks$state == "successful"] = "failed"
 # Do the same for projects have ratio greater than 1 but classified as "failed"
 ks$state[ks$ratio >= 1 & ks$state == "failed"] = "successful"
-ks <- ks %>% select(state,backers,duration,usd_goal_real,main_category,category,country,launched_year) %>% na.omit()
+ks %<>% select(state,backers,duration,usd_goal_real,main_category,category,country,launched_year) %>% na.omit()
 # Success and Fail
 kssf <- ks %>% filter(state==c("successful","failed")) %>% droplevels()
 kssf$launched_year <- as.numeric(kssf$launched_year)
 kssf %<>% mutate(log_usd_goal_real=log(usd_goal_real))
+kssf <- kssf[,c(3,4,10,11,12,14,15,16,18,19,20)]
+kssf %<>% na.omit()
 # kssf %<>% mutate(state=ifelse(state=="successful",1,0))  # Success=1, Failed=0
 ```
     
@@ -114,7 +116,7 @@ plot(rf3, main = "Error rate of random forest")
 
 # Add backers
 rf4 <- randomForest(state~duration+usd_goal_real+main_category+country+launched_year+backers,
-                    data = df_train_sf, ntree=500, mtry=best.m, importance=TRUE)
+                    data = df_train_sf, ntree=500, mtry=2, importance=TRUE)
 # Importance of Variables
 importance(rf4)
 varImpPlot(rf4, pch = 20, main = "Importance of Variables")
@@ -138,7 +140,7 @@ pred5 <- performance(perf3, "tpr","fpr")
 plot(pred5,main="ROC Curve for Random Forest",col=2,lwd=2)
 abline(a=0,b=1,lwd=2,lty=2,col="gray")
 # random forest explainer
-plot_multi_way_importance(rf3, size_measure = "no_of_nodes")
+plot_multi_way_importance(rf4, size_measure = "no_of_nodes")
 plot_predict_interaction(rf3,df_test_sf,"backers","launched_year")
 plot_predict_interaction(rf3,df_test_sf,"duration","log_usd_goal_real")
 ```

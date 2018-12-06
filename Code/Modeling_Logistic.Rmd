@@ -38,7 +38,7 @@ library(Rcpp)
 
 ### Import dataset and Preparation
 ```{r }
-kickstarter <- read.csv("C:/Users/Qilincaizi/Desktop/BU_MSSP/Fall_2018/MA678_Appl_Stat_Model/Midterm_Project/dataset/kickstarter.csv")
+kickstarter <- read.csv("C:/Users/Qilincaizi/Desktop/BU_MSSP/Fall_2018/MA678_Appl_Stat_Model/Midterm_Project/Kickstarter_project/dataset/kickstarter.csv")
 ks <- kickstarter
 # Reformat Deadline and Launched to Data
 ks$deadline <- as.Date(ks$deadline, "%m/%d/%Y")

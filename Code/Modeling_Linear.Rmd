@@ -34,7 +34,7 @@ library(Rcpp)
 
 ### Import dataset and Preparation
 ```{r }
-kickstarter <- read.csv("C:/Users/Qilincaizi/Desktop/BU_MSSP/Fall_2018/MA678_Appl_Stat_Model/Midterm_Project/dataset/kickstarter.csv")
+kickstarter <- read.csv("C:/Users/Qilincaizi/Desktop/BU_MSSP/Fall_2018/MA678_Appl_Stat_Model/Midterm_Project/Kickstarter_project/dataset/kickstarter.csv")
 ks <- kickstarter
 # Reformat Deadline and Launched to Data
 ks$deadline <- as.Date(ks$deadline, "%m/%d/%Y")
@@ -258,7 +258,7 @@ plot(log(df_train$usd_pledged_real), fitted(mllm4),xlab="actual value",ylab="fit
 ```{r }
 # Vary Intercept and Vary Slope: backers
 mllm5 <- lmer(log(usd_pledged_real+1)~log(backers+1)+duration.c+log(usd_goal_real+1)+
-                (1+log(backers+1)|main_category/category)+(1|country)+as.numeric(launched_year),data=df_train)
+                (1+log(backers+1)|main_category/category)+(1|country)+scale(as.numeric(launched_year)),data=df_train)
 summary(mllm5)
 # Residual
 plot(fitted(mllm5),resid(mllm5,type="pearson"),col="blue")
@@ -267,6 +267,7 @@ abline(0,1,col="red")
 # Actual vs Fitted
 plot(log(df_train$usd_pledged_real), fitted(mllm5),xlab="actual value",ylab="fitted values")+
   abline(v=15,h=15,0,1, col="red")
+head(ranef(mllm5))
 ```
 
 ```{r }
